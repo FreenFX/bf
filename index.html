@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>h💌</title>
+
+<!-- ============================================================
+  FUENTES — Puedes cambiarlas buscando otras en fonts.google.com
+  Cormorant Garamond = título romántico / Lato = texto limpio
+  ============================================================ -->
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   COLORES PRINCIPALES — edita aquí para cambiar toda la paleta
+   ============================================================ */
+:root {
+  --rose:        #e8637a;
+  --rose-light:  #f2a0b0;
+  --rose-dark:   #c04060;
+  --blush:       #fce8ee;
+  --cream:       #fff8f5;
+  --gold:        #d4a25a;
+  --gold-light:  #f0d080;
+  --text-dark:   #3a1a25;
+  --text-mid:    #7a4455;
+  --text-light:  #b07080;
+  --white:       #ffffff;
+  --glass-bg:    rgba(255,255,255,0.18);
+  --glass-border:rgba(255,255,255,0.35);
+}
+
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%; height: 100%;
+  overflow-x: hidden;
+  font-family: 'Lato', sans-serif;
+  background: var(--cream);
+  color: var(--text-dark);
+}
+
+/* ============================================================
+   FONDO ANIMADO CON PARTÍCULAS (canvas)
+   ============================================================ */
+#particles-canvas {
+  position: fixed; inset: 0; z-index: 0;
+  pointer-events: none;
+}
+
+/* ============================================================
+   PÁGINAS — cada sección ocupa toda la pantalla
+   ============================================================ */
+.page {
+  position: fixed; inset: 0; z-index: 10;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  transition: opacity 0.8s ease, transform 0.8s ease;
+  overflow-y: auto;
+}
+.page.hidden {
+  opacity: 0; pointer-events: none; transform: scale(0.96);
+}
+
+/* ============================================================
+   GRADIENTE DE FONDO COMPARTIDO
+   ============================================================ */
+.bg-gradient {
+  background:
+    radial-gradient(ellipse at 20% 20%, rgba(232,99,122,0.25) 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 80%, rgba(212,162,90,0.18) 0%, transparent 55%),
+    radial-gradient(ellipse at 50% 50%, rgba(252,232,238,0.9) 0%, var(--cream) 100%);
+}
+
+/* ============================================================
+   GLASSMORPHISM HELPER
+   ============================================================ */
+.glass {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 24px;
+}
+
+/* ============================================================
+   PÁGINA 1 — REGALO
+   ============================================================ */
+#page-gift {
+  background:
+    radial-gradient(ellipse at 30% 30%, rgba(232,99,122,0.3) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 70%, rgba(212,162,90,0.2) 0%, transparent 50%),
+    linear-gradient(135deg, #fff0f4 0%, var(--cream) 100%);
+}
+
+.gift-wrapper {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 2rem;
+}
+
+.gift-label {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.1rem, 3vw, 1.5rem);
+  font-weight: 300;
+  font-style: italic;
+  color: var(--text-mid);
+  letter-spacing: 0.08em;
+  opacity: 0;
+  animation: fadeInDown 1s 0.5s ease forwards;
+}
+
+/* El contenedor de regalos apilados */
+#gift-stack {
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* Cada regalo individual */
+.gift-box {
+  position: absolute;
+  cursor: pointer;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  transform-origin: center bottom;
+  transition: transform 0.15s ease;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.gift-box:hover { transform: scale(1.04) translateY(-4px); }
+.gift-box:active { transform: scale(0.97); }
+
+/* SVG del regalo dentro del .gift-box */
+.gift-svg { display: block; filter: drop-shadow(0 8px 32px rgba(232,99,122,0.35)); }
+
+/* Animación flotante para el regalo activo */
+.gift-float {
+  animation: giftFloat 3s ease-in-out infinite;
+}
+@keyframes giftFloat {
+  0%,100% { transform: translateY(0) rotate(-1deg); }
+  50%      { transform: translateY(-14px) rotate(1deg); }
+}
+
+/* Animación de entrada del regalo */
+@keyframes giftPop {
+  0%   { opacity:0; transform: scale(0.3) rotate(-8deg); }
+  70%  { transform: scale(1.08) rotate(2deg); }
+  100% { opacity:1; transform: scale(1) rotate(0deg); }
+}
+
+/* Animación de salida del regalo */
+@keyframes giftExit {
+  0%   { opacity:1; transform: scale(1); }
+  40%  { transform: scale(1.15) rotate(4deg); }
+  100% { opacity:0; transform: scale(0.1) rotate(-20deg); }
+}
+
+/* Brillo pulsante alrededor del regalo */
+.gift-glow {
+  position: absolute; inset: -20px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(232,99,122,0.25) 0%, transparent 70%);
+  animation: glowPulse 2.5s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes glowPulse {
+  0%,100% { opacity:0.5; transform: scale(1); }
+  50%      { opacity:1;   transform: scale(1.1); }
+}
+
+/* Emoji partículas al click */
+.burst-particle {
+  position: fixed;
+  pointer-events: none;
+  font-size: 1.4rem;
+  z-index: 999;
+  animation: burstFly 1.2s ease-out forwards;
+}
+@keyframes burstFly {
+  0%   { opacity:1; transform: translate(0,0) scale(1); }
+  100% { opacity:0; transform: translate(var(--dx), var(--dy)) scale(0.3); }
+}
+
+/* Contador de clicks */
+.click-hint {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  letter-spacing: 0.1em;
+  margin-top: 1rem;
+  opacity: 0;
+  animation: fadeInDown 1s 1s ease forwards;
+}
+
+/* ============================================================
+   PÁGINA 2 — MENÚ
+   ============================================================ */
+#page-menu {
+  background:
+    radial-gradient(ellipse at 25% 25%, rgba(212,162,90,0.2) 0%, transparent 50%),
+    radial-gradient(ellipse at 75% 75%, rgba(232,99,122,0.2) 0%, transparent 50%),
+    linear-gradient(160deg, #fff5f0 0%, #ffeef4 100%);
+}
+
+.menu-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.2rem, 6vw, 3.8rem);
+  font-weight: 600;
+  color: var(--rose-dark);
+  text-align: center;
+  line-height: 1.1;
+  margin-bottom: 0.4rem;
+}
+.menu-subtitle {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1rem, 2.5vw, 1.3rem);
+  font-style: italic;
+  font-weight: 300;
+  color: var(--text-light);
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+.menu-cards {
+  display: flex; gap: 1.5rem; flex-wrap: wrap;
+  justify-content: center;
+}
+
+.menu-card {
+  width: clamp(140px, 40vw, 200px);
+  aspect-ratio: 3/4;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 1rem;
+  cursor: pointer;
+  border-radius: 24px;
+  background: rgba(255,255,255,0.6);
+  border: 1.5px solid rgba(232,99,122,0.25);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 8px 40px rgba(232,99,122,0.1), inset 0 1px 0 rgba(255,255,255,0.8);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  padding: 1.5rem 1rem;
+  -webkit-tap-highlight-color: transparent;
+}
+.menu-card:hover {
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 0 20px 60px rgba(232,99,122,0.2), inset 0 1px 0 rgba(255,255,255,0.9);
+  border-color: rgba(232,99,122,0.5);
+}
+.menu-card:active { transform: scale(0.97); }
+
+.menu-card-icon {
+  font-size: 2.8rem;
+  filter: drop-shadow(0 2px 8px rgba(232,99,122,0.3));
+}
+.menu-card-label {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: var(--rose-dark);
+  letter-spacing: 0.04em;
+}
+.menu-card-desc {
+  font-size: 0.75rem;
+  font-weight: 300;
+  color: var(--text-light);
+  letter-spacing: 0.06em;
+  text-align: center;
+}
+
+/* Animación de entrada del menú */
+@keyframes menuCardIn {
+  0%   { opacity:0; transform: translateY(30px) scale(0.9); }
+  100% { opacity:1; transform: translateY(0) scale(1); }
+}
+.menu-card:nth-child(1) { animation: menuCardIn 0.6s 0.1s ease both; }
+.menu-card:nth-child(2) { animation: menuCardIn 0.6s 0.25s ease both; }
+
+/* ============================================================
+   BOTÓN VOLVER
+   ============================================================ */
+.back-btn {
+  position: fixed; top: 1.2rem; left: 1.2rem; z-index: 100;
+  background: rgba(255,255,255,0.5);
+  border: 1px solid rgba(232,99,122,0.3);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 50px;
+  padding: 0.5rem 1.1rem;
+  font-size: 0.85rem;
+  font-weight: 300;
+  letter-spacing: 0.06em;
+  color: var(--rose-dark);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.back-btn:hover {
+  background: rgba(255,255,255,0.85);
+  box-shadow: 0 4px 20px rgba(232,99,122,0.15);
+}
+
+/* ============================================================
+   PÁGINA 3 — TIEMPO (CONTADOR)
+   ============================================================ */
+#page-tiempo {
+  background:
+    radial-gradient(ellipse at 15% 85%, rgba(212,162,90,0.25) 0%, transparent 50%),
+    radial-gradient(ellipse at 85% 15%, rgba(232,99,122,0.25) 0%, transparent 50%),
+    linear-gradient(135deg, #1a0810 0%, #2d0e1c 50%, #1a0810 100%);
+  color: var(--white);
+}
+
+.tiempo-content {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 2rem;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  width: 100%; max-width: 700px;
+}
+
+.tiempo-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
+  font-weight: 300;
+  font-style: italic;
+  color: rgba(255,255,255,0.55);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+.tiempo-headline {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 6vw, 4rem);
+  font-weight: 300;
+  color: var(--white);
+  line-height: 1.15;
+  /* ============================================================
+     TEXTO PRINCIPAL DEL CONTADOR — edita el texto aquí
+     ============================================================ */
+}
+.tiempo-headline span {
+  color: var(--rose-light);
+  font-style: italic;
+}
+
+/* La fila de bloques del contador */
+.timer-grid {
+  display: flex; gap: 1rem; flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+}
+
+.timer-block {
+  flex: 1; min-width: 80px; max-width: 140px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 20px;
+  padding: 1.2rem 0.8rem;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 0.4rem;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.timer-number {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.4rem, 7vw, 4.5rem);
+  font-weight: 300;
+  color: var(--white);
+  line-height: 1;
+  min-width: 2ch; text-align: center;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+.timer-number.tick {
+  animation: numberTick 0.3s ease;
+}
+@keyframes numberTick {
+  0%,100% { transform: translateY(0); color: var(--white); }
+  50%      { transform: translateY(-4px); color: var(--rose-light); }
+}
+
+.timer-label {
+  font-size: 0.68rem;
+  font-weight: 300;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* ============================================================
+   FECHA DE INICIO — ¡EDITA AQUÍ! (también en JavaScript abajo)
+   ============================================================ */
+.tiempo-date {
+  font-size: 0.8rem;
+  font-weight: 300;
+  color: rgba(255,255,255,0.3);
+  letter-spacing: 0.1em;
+  /* El texto "Desde el 19 de febrero de 2025" — edítalo abajo en el HTML */
+}
+
+/* ============================================================
+   PÁGINA 4 — MENSAJE
+   ============================================================ */
+#page-mensaje {
+  background:
+    radial-gradient(ellipse at 60% 10%, rgba(232,99,122,0.2) 0%, transparent 45%),
+    radial-gradient(ellipse at 10% 90%, rgba(212,162,90,0.15) 0%, transparent 45%),
+    linear-gradient(160deg, #fff8f5 0%, #ffeef4 100%);
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding-top: 4rem;
+}
+
+.mensaje-inner {
+  width: 100%; max-width: 680px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+
+.mensaje-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+.mensaje-to {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(0.9rem, 2vw, 1rem);
+  font-style: italic;
+  font-weight: 300;
+  color: var(--text-light);
+  letter-spacing: 0.12em;
+  margin-bottom: 0.5rem;
+}
+.mensaje-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-weight: 400;
+  color: var(--rose-dark);
+  line-height: 1.1;
+}
+
+/* La carta/card del mensaje */
+.mensaje-card {
+  background: rgba(255,255,255,0.7);
+  border: 1px solid rgba(232,99,122,0.15);
+  border-radius: 24px;
+  padding: clamp(1.5rem, 5vw, 2.5rem);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow:
+    0 4px 40px rgba(232,99,122,0.08),
+    inset 0 1px 0 rgba(255,255,255,0.9);
+  position: relative;
+}
+.mensaje-card::before {
+  content: '"';
+  position: absolute;
+  top: -1rem; left: 1.5rem;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 5rem;
+  color: rgba(232,99,122,0.15);
+  line-height: 1;
+  pointer-events: none;
+}
+
+/* Texto del mensaje */
+.mensaje-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.05rem, 2.5vw, 1.3rem);
+  font-weight: 300;
+  line-height: 1.95;
+  color: var(--text-dark);
+  white-space: pre-line; /* respeta saltos de línea \n */
+}
+.mensaje-text p { margin-bottom: 1.2em; }
+.mensaje-text p:last-child { margin-bottom: 0; }
+
+/* Firma */
+.mensaje-firma {
+  margin-top: 2rem;
+  text-align: right;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
+  font-style: italic;
+  font-weight: 300;
+  color: var(--text-mid);
+}
+
+/* Divisor decorativo */
+.divider {
+  display: flex; align-items: center; gap: 0.8rem;
+  margin: 1.8rem 0;
+  opacity: 0.35;
+}
+.divider::before, .divider::after {
+  content:''; flex:1;
+  height: 1px; background: var(--rose);
+}
+.divider span { font-size: 0.9rem; color: var(--rose); }
+
+/* ============================================================
+   SECCIÓN DE VIDEOS — dentro de la página Mensaje
+   ============================================================ */
+.videos-section {
+  margin-top: 3rem;
+}
+.videos-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: var(--rose-dark);
+  margin-bottom: 1.2rem;
+  text-align: center;
+}
+.videos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+}
+.video-item {
+  border-radius: 16px;
+  overflow: hidden;
+  background: rgba(0,0,0,0.04);
+  border: 1px solid rgba(232,99,122,0.15);
+  box-shadow: 0 4px 20px rgba(232,99,122,0.07);
+}
+.video-item video {
+  width: 100%; display: block;
+  max-height: 320px;
+  object-fit: cover;
+}
+.video-caption {
+  padding: 0.6rem 0.9rem;
+  font-size: 0.8rem;
+  font-style: italic;
+  font-weight: 300;
+  color: var(--text-light);
+  text-align: center;
+}
+
+/* ============================================================
+   ANIMACIONES GENERALES
+   ============================================================ */
+@keyframes fadeInDown {
+  0%   { opacity:0; transform: translateY(-16px); }
+  100% { opacity:1; transform: translateY(0); }
+}
+@keyframes fadeInUp {
+  0%   { opacity:0; transform: translateY(20px); }
+  100% { opacity:1; transform: translateY(0); }
+}
+
+/* ============================================================
+   SCROLL BAR BONITA
+   ============================================================ */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(232,99,122,0.35); border-radius: 3px; }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 480px) {
+  .timer-grid { gap: 0.6rem; }
+  .timer-block { padding: 1rem 0.5rem; }
+  .menu-cards { gap: 1rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- Partículas de fondo -->
+<canvas id="particles-canvas"></canvas>
+
+<!-- ============================================================
+     PÁGINA 1: REGALO
+     ============================================================ -->
+<section id="page-gift" class="page">
+  <div class="gift-wrapper">
+    <p class="gift-label">hola...</p>
+    <div id="gift-stack" style="width:220px; height:220px;"></div>
+    <p class="click-hint">toca el regalo (porfa)</p>
+  </div>
+</section>
+
+<!-- ============================================================
+     PÁGINA 2: MENÚ
+     ============================================================ -->
+<section id="page-menu" class="page hidden">
+  <div style="display:flex;flex-direction:column;align-items:center;">
+    <!-- TEXTO DEL MENÚ — edita aquí -->
+    <h1 class="menu-title">elegi el que quieras<br><em style="font-weight:300;">o ninguna qsy</em></h1>
+    <p class="menu-subtitle">aca deberia poner algo re tiernito pero ni idea</p>
+    <div class="menu-cards">
+      <div class="menu-card" onclick="showPage('tiempo')">
+        <div class="menu-card-icon">⏳</div>
+        <div class="menu-card-label">Tiempo</div>
+        <div class="menu-card-desc">contador<br>sin mas</div>
+      </div>
+      <div class="menu-card" onclick="showPage('mensaje')">
+        <div class="menu-card-icon">💌</div>
+        <div class="menu-card-label">Mensaje</div>
+        <div class="menu-card-desc">aca no se<br>que poner</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     PÁGINA 3: TIEMPO (CONTADOR DESDE 19 FEB 2025)
+     ============================================================ -->
+<section id="page-tiempo" class="page hidden">
+  <button class="back-btn" onclick="showPage('menu')">← volver</button>
+  <div class="tiempo-content">
+    <p class="tiempo-title">te conozco desde</p>
+
+    <!-- ============================================================
+         TÍTULO DEL CONTADOR — edita el texto aquí
+         ============================================================ -->
+    <h2 class="tiempo-headline">
+      Cada segundo <span>al lado tuyo</span><br>es un regalo
+    </h2>
+
+    <div class="timer-grid">
+      <div class="timer-block">
+        <div class="timer-number" id="t-days">0</div>
+        <div class="timer-label">días</div>
+      </div>
+      <div class="timer-block">
+        <div class="timer-number" id="t-hours">0</div>
+        <div class="timer-label">horas</div>
+      </div>
+      <div class="timer-block">
+        <div class="timer-number" id="t-minutes">0</div>
+        <div class="timer-label">minutos</div>
+      </div>
+      <div class="timer-block">
+        <div class="timer-number" id="t-seconds">0</div>
+        <div class="timer-label">segundos</div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         FECHA DE INICIO — cambia el texto visible aquí.
+         La fecha real que calcula el contador se cambia
+         en el JavaScript más abajo (busca START_DATE)
+         ============================================================ -->
+    <p class="tiempo-date">✦desde el 19 de febrero de 2025 (por si se te olvida)✦</p>
+  </div>
+</section>
+
+<!-- ============================================================
+     PÁGINA 4: MENSAJE
+     ============================================================ -->
+<section id="page-mensaje" class="page hidden">
+  <button class="back-btn" onclick="showPage('menu')">← volver</button>
+  <div class="mensaje-inner">
+    <div class="mensaje-header">
+      <!-- DESTINATARIO — edita aquí -->
+      <p class="mensaje-to">hola</p>
+      <!-- TÍTULO DE LA CARTA — edita aquí -->
+      <h2 class="mensaje-title">te amo amiguita</h2>
+    </div>
+
+ <div class="mensaje-card">
+
+  <!-- ============================================================
+       ✏️  AQUÍ EMPIEZA TU MENSAJE PERSONAL
+       ✏️  EDITA EL TEXTO ENTRE LAS ETIQUETAS <p>
+       ✏️  Puedes agregar tantos párrafos como quieras
+       ✏️  Usa <br> para saltos de línea dentro de un párrafo
+       ✏️  ESTE ES EL ÚNICO LUGAR QUE NECESITAS EDITAR PARA EL TEXTO
+       ============================================================ -->
+  <div class="mensaje-text">
+
+    <p>
+      la verdad no soy mucho de escribir cartas ni de ponerme sentimental, pero con vos siento que vale la pena hacerlo porque sos una persona demasiado importante para mi y hay cosas que a veces no me salen de normal.
+    </p>
+
+    <p>
+      gracias por aparecer en mi vida y por quedarte. en momentos buenos, en momentos malos y tambien en esos dias donde solo tenes ganas de pegarte un tiro.
+    </p>
+    <p>
+      con vos puedo ser yo real, sin actuar, sin medir lo que digo y sin pensar si quedo bien o mal. eso lo valoro muchisimo y no me pasa con nadie.
+    </p>
+
+    <p>
+      gracias por cada charla, por cada risa que me sacaste cuando no tenia ganas de nada, y por cada vez que me ayudaste aunque capaz ni te rescatabas.
+    </p>
+
+    <p>
+      sos de esas personas que tienen una energia hermosa. llegas y me haces sentir mejor de toque.
+    </p>
+
+    <p>
+      quiero que sepas que para mi no sos una amiga mas. sos mi mejor amiga y ocupas un lugar gigante en mi vida. sos alguien que realmente me importa y que quiero seguir teniendo cerca muchisimo tiempo.
+    </p>
+
+    <p>
+      ojala siempre te pasen cosas buenas, porque de verdad te las mereces. ojala la vida te devuelva todo lo bueno que das.
+    </p>
+
+    <p>
+      capaz no te lo digo seguido(o si depende el dia), pero te amo mucho, te valoro muchisimo y me hace feliz haberte conocido.
+    </p>
+
+    <p>
+      gracias por cada momento, cada risa, cada charla y cada cosa que haces. gracias por estar siempre.
+    </p>
+
+  </div>
+  <!-- ============================================================
+       ✏️  AQUÍ TERMINA TU MENSAJE PERSONAL
+       ============================================================ -->
+
+  <div class="divider"><span>✦</span></div>
+
+  <!-- FIRMA — edita aquí -->
+  <div class="mensaje-firma">
+    firma: yo
+  </div>
+
+</div>
+
+    <!-- ============================================================
+         SECCIÓN DE VIDEOS
+         ============================================================
+         INSTRUCCIONES PARA AGREGAR TUS VIDEOS:
+         ─────────────────────────────────────────────────────────────
+         OPCIÓN A — Si abres este HTML desde una carpeta local:
+           1. Crea una carpeta llamada  "videos"  en el mismo lugar
+              donde guardaste este archivo HTML.
+           2. Pon tus archivos de video dentro de esa carpeta.
+              Usa nombres simples sin espacios, por ejemplo:
+                videos/clip1.mp4
+                videos/clip2.mp4
+                videos/clip3.mp4
+           3. En el código de abajo, cambia  src="videos/clip1.mp4"
+              por el nombre de tu archivo.
+
+         OPCIÓN B — Si subes el sitio a un hosting (Netlify, GitHub Pages):
+           1. Sube la carpeta "videos" junto con el HTML.
+           2. Igual que la opción A, apunta src="videos/tu-archivo.mp4".
+
+         OPCIÓN C — Video de YouTube / Google Drive:
+           1. En YouTube: haz clic en "Compartir → Insertar" y
+              copia la URL del iframe. Reemplaza el elemento <video>
+              por un <iframe width="100%" height="240" src="TU_URL"
+              frameborder="0" allowfullscreen></iframe>
+
+         FORMATOS COMPATIBLES: .mp4 (recomendado), .webm, .mov
+         TAMAÑO RECOMENDADO: menos de 30 MB por video para carga rápida
+
+         PARA OCULTAR LA SECCIÓN COMPLETA: agrega  style="display:none"
+         al div con class="videos-section"
+         ============================================================ -->
+    <div class="videos-section">
+      <h3 class="videos-title">clips<br>
+    (ninguno de estos clips es gracioso, pero me hace feliz verlos)</h3>
+      <div class="videos-grid">
+
+        <!-- ─── VIDEO 1 ───────────────────────────────────────────
+             Cambia  src="videos/clip1.mp4"  por la ruta de tu video
+             Cambia el texto del <p> por tu descripción
+             ─────────────────────────────────────────────────────── -->
+<div class="video-item">
+  <iframe
+    src="https://drive.google.com/file/d/1rmqFsPDDs4NELsvBlgvMco2PC1IdE8Xv/preview"
+    width="100%"
+    height="240"
+    allow="autoplay"
+    allowfullscreen>
+  </iframe>
+
+  <p class="video-caption">aca tengo que poner algo</p>
+</div>
+
+        <!-- ─── VIDEO 2 ───────────────────────────────────────────
+             Cambia  src="videos/clip2.mp4"  por la ruta de tu video
+             ─────────────────────────────────────────────────────── -->
+<div class="video-item">
+  <iframe
+    src="https://drive.google.com/file/d/1F-ESo46axt65H_bxS7j1HKd7gm6mt1M-/preview"
+    width="100%"
+    height="240"
+    allow="autoplay"
+    allowfullscreen>
+  </iframe>
+
+  <p class="video-caption">nada eso te amo</p>
+</div>
+
+        <!-- ─── AGREGAR MÁS VIDEOS ────────────────────────────────
+             Copia el bloque de arriba (desde  <div class="video-item">
+             hasta  </div> ) y pégalo aquí.
+             Cambia el src por el nombre de tu nuevo video.
+             ─────────────────────────────────────────────────────── -->
+
+      </div>
+    </div>
+    <!-- FIN SECCIÓN VIDEOS -->
+
+  </div>
+</section>
+
+<!-- ============================================================
+     JAVASCRIPT
+     ============================================================ -->
+<script>
+/* ============================================================
+   CONFIGURACIÓN RÁPIDA — edita solo estos valores
+   ============================================================ */
+
+// ⬇️ FECHA DE INICIO DEL CONTADOR (año, mes-1, día, hora, minuto, segundo)
+// Mes-1: enero=0, febrero=1, marzo=2 ... diciembre=11
+const START_DATE = new Date(2025, 1, 19, 0, 0, 0); // 19 de febrero 2025
+
+// ⬇️ Emojis que salen al clickear el regalo (puedes cambiarlos)
+const BURST_EMOJIS = ['hola', 'xd', 'uwu', '💖', 'h', '🌹', '💗', '🦋'];
+
+/* ============================================================
+   SISTEMA DE REGALOS ANIDADOS
+   Los regalos se vuelven progresivamente más pequeños.
+   Cambia los colores editando los valores hex en giftColors.
+   ============================================================ */
+const giftData = [
+  { size: 200, ribbon: '#e8637a', box: '#fce8ee', lid: '#f2a0b0', bow: '#c04060' },
+  { size: 155, ribbon: '#d4a25a', box: '#fff5e0', lid: '#f0d080', bow: '#a0762a' },
+  { size: 118, ribbon: '#a06090', box: '#f5e8ff', lid: '#d4a8e8', bow: '#7a3a6a' },
+  { size:  88, ribbon: '#60a080', box: '#e8fff5', lid: '#a0e0c0', bow: '#307050' },
+  { size:  64, ribbon: '#e8637a', box: '#fff0f0', lid: '#f8c0c8', bow: '#c04060' },
+];
+
+let currentGift = 0;
+
+/* Dibuja un regalo en SVG */
+function makeGiftSVG(d) {
+  const s = d.size;
+  const bh = Math.round(s * 0.62); // altura base
+  const lh = Math.round(s * 0.22); // altura tapa
+  const bw = s;
+  const bx = 0;
+  const by = s - bh - lh;
+  const lx = 0;
+  const ly = by - lh;
+  const cx = s / 2;
+  const cy = ly + lh / 2;
+
+  return `<svg class="gift-svg" width="${s}" height="${s}" viewBox="0 0 ${s} ${s}" xmlns="http://www.w3.org/2000/svg">
+    <!-- sombra suave -->
+    <ellipse cx="${s/2}" cy="${s-6}" rx="${s*0.42}" ry="${s*0.06}" fill="rgba(0,0,0,0.12)"/>
+    <!-- caja base -->
+    <rect x="${bx}" y="${s-bh}" width="${bw}" height="${bh}" rx="6"
+          fill="${d.box}" stroke="${d.ribbon}" stroke-width="1.5"/>
+    <!-- tapa -->
+    <rect x="${lx}" y="${ly}" width="${bw}" height="${lh+8}" rx="4"
+          fill="${d.lid}" stroke="${d.ribbon}" stroke-width="1.5"/>
+    <!-- cinta vertical -->
+    <rect x="${cx-s*0.055}" y="${ly}" width="${s*0.11}" height="${bh+lh}"
+          fill="${d.ribbon}" opacity="0.85"/>
+    <!-- cinta horizontal -->
+    <rect x="${bx}" y="${cy-s*0.055}" width="${bw}" height="${s*0.11}"
+          fill="${d.ribbon}" opacity="0.85"/>
+    <!-- lazo izquierdo -->
+    <ellipse cx="${cx-s*0.16}" cy="${ly-s*0.07}" rx="${s*0.18}" ry="${s*0.1}"
+             fill="${d.bow}" transform="rotate(-30,${cx-s*0.16},${ly-s*0.07})"/>
+    <!-- lazo derecho -->
+    <ellipse cx="${cx+s*0.16}" cy="${ly-s*0.07}" rx="${s*0.18}" ry="${s*0.1}"
+             fill="${d.bow}" transform="rotate(30,${cx+s*0.16},${ly-s*0.07})"/>
+    <!-- nudo del lazo -->
+    <circle cx="${cx}" cy="${ly-s*0.04}" r="${s*0.07}" fill="${d.ribbon}"/>
+  </svg>`;
+}
+
+function createGiftElement(index) {
+  const data = giftData[index];
+  const div = document.createElement('div');
+  div.className = 'gift-box gift-float';
+  div.id = `gift-${index}`;
+  div.innerHTML = `<div class="gift-glow"></div>${makeGiftSVG(data)}`;
+  div.style.animation = 'giftPop 0.55s cubic-bezier(.17,.89,.32,1.28) both, giftFloat 3s ease-in-out 0.55s infinite';
+  div.onclick = handleGiftClick;
+
+  // Ajustamos el tamaño del stack
+  const stack = document.getElementById('gift-stack');
+  const maxSize = giftData[0].size;
+  stack.style.width  = maxSize + 'px';
+  stack.style.height = maxSize + 'px';
+  return div;
+}
+
+/* Inicializa el primer regalo */
+function initGift() {
+  const stack = document.getElementById('gift-stack');
+  stack.innerHTML = '';
+  const el = createGiftElement(0);
+  stack.appendChild(el);
+  currentGift = 0;
+}
+
+/* Lanza partículas de emojis desde el punto de click */
+function spawnBurst(x, y) {
+  for (let i = 0; i < 10; i++) {
+    const p = document.createElement('div');
+    p.className = 'burst-particle';
+    p.textContent = BURST_EMOJIS[Math.floor(Math.random() * BURST_EMOJIS.length)];
+    const angle = (Math.PI * 2 / 10) * i + Math.random() * 0.5;
+    const dist  = 80 + Math.random() * 80;
+    p.style.left = x + 'px';
+    p.style.top  = y + 'px';
+    p.style.setProperty('--dx', Math.cos(angle) * dist + 'px');
+    p.style.setProperty('--dy', Math.sin(angle) * dist + 'px');
+    p.style.animationDelay = Math.random() * 0.15 + 's';
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 1500);
+  }
+}
+
+function handleGiftClick(e) {
+  const rect = e.currentTarget.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top  + rect.height / 2;
+  spawnBurst(cx, cy);
+
+  const current = document.getElementById(`gift-${currentGift}`);
+  if (!current) return;
+
+  // Animar la salida del regalo actual
+  current.style.animation = 'giftExit 0.45s cubic-bezier(.55,0,.85,.1) forwards';
+  current.onclick = null; // evitar doble click
+
+  const exitingGift = currentGift;
+  currentGift++;
+
+  setTimeout(() => {
+    current.remove();
+
+    if (currentGift >= giftData.length) {
+      // Último regalo — transición al menú
+      transitionToMenu();
+    } else {
+      // Nuevo regalo más pequeño
+      const stack = document.getElementById('gift-stack');
+      const next = createGiftElement(currentGift);
+      stack.appendChild(next);
+    }
+  }, 460);
+}
+
+/* Transición cinematográfica al menú */
+function transitionToMenu() {
+  // Fade out página regalo
+  const giftPage = document.getElementById('page-gift');
+  giftPage.style.transition = 'opacity 0.9s ease, transform 0.9s ease';
+  giftPage.style.opacity = '0';
+  giftPage.style.transform = 'scale(1.05)';
+
+  // Pequeña demora y luego mostramos el menú
+  setTimeout(() => {
+    giftPage.classList.add('hidden');
+    giftPage.style.transform = '';
+    showPage('menu');
+  }, 850);
+}
+
+/* ============================================================
+   NAVEGACIÓN ENTRE PÁGINAS
+   ============================================================ */
+const pages = {
+  gift:    document.getElementById('page-gift'),
+  menu:    document.getElementById('page-menu'),
+  tiempo:  document.getElementById('page-tiempo'),
+  mensaje: document.getElementById('page-mensaje'),
+};
+
+function showPage(name) {
+  Object.entries(pages).forEach(([key, el]) => {
+    if (key === name) {
+      el.classList.remove('hidden');
+      el.style.opacity = '';
+      el.style.transform = '';
+    } else {
+      el.classList.add('hidden');
+    }
+  });
+
+  if (name === 'tiempo') startTimer();
+}
+
+/* ============================================================
+   CONTADOR DE TIEMPO
+   ============================================================ */
+let timerInterval = null;
+const prevValues = { days: -1, hours: -1, minutes: -1, seconds: -1 };
+
+function startTimer() {
+  if (timerInterval) clearInterval(timerInterval);
+  updateTimer();
+  timerInterval = setInterval(updateTimer, 1000);
+}
+
+function updateTimer() {
+  const now   = new Date();
+  const diff  = now - START_DATE; // milisegundos
+  if (diff < 0) return;
+
+  const totalSec = Math.floor(diff / 1000);
+  const seconds  = totalSec % 60;
+  const totalMin = Math.floor(totalSec / 60);
+  const minutes  = totalMin % 60;
+  const totalHrs = Math.floor(totalMin / 60);
+  const hours    = totalHrs % 24;
+  const days     = Math.floor(totalHrs / 24);
+
+  setTimerValue('t-days',    days,    prevValues, 'days');
+  setTimerValue('t-hours',   hours,   prevValues, 'hours');
+  setTimerValue('t-minutes', minutes, prevValues, 'minutes');
+  setTimerValue('t-seconds', seconds, prevValues, 'seconds');
+}
+
+function setTimerValue(id, value, prev, key) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const str = String(value).padStart(2, '0');
+  if (prev[key] !== value) {
+    el.textContent = str;
+    el.classList.remove('tick');
+    void el.offsetWidth; // reflow para reiniciar animación
+    el.classList.add('tick');
+    prev[key] = value;
+  }
+}
+
+/* ============================================================
+   PARTÍCULAS FLOTANTES DE FONDO
+   Cantidad y velocidad editables abajo.
+   ============================================================ */
+(function initParticles() {
+  const canvas = document.getElementById('particles-canvas');
+  const ctx    = canvas.getContext('2d');
+
+  // ── EDITA AQUÍ: cantidad de partículas ──
+  const NUM_PARTICLES = 55;
+
+  const particles = [];
+  let W, H;
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  const shapes = ['circle', 'heart', 'star'];
+
+  for (let i = 0; i < NUM_PARTICLES; i++) {
+    particles.push({
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      size:  2 + Math.random() * 5,
+      speedX: (Math.random() - 0.5) * 0.35,
+      speedY: -(0.1 + Math.random() * 0.35),
+      opacity: 0.05 + Math.random() * 0.25,
+      shape: shapes[Math.floor(Math.random() * shapes.length)],
+      hue: Math.random() > 0.6 ? '#e8637a' : '#d4a25a',
+    });
+  }
+
+  function drawHeart(ctx, x, y, size) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.scale(size * 0.1, size * 0.1);
+    ctx.beginPath();
+    ctx.moveTo(0, -3);
+    ctx.bezierCurveTo(5, -8, 10, -3, 0, 4);
+    ctx.bezierCurveTo(-10, -3, -5, -8, 0, -3);
+    ctx.restore();
+  }
+
+  function drawStar(ctx, x, y, size) {
+    ctx.save(); ctx.translate(x, y);
+    ctx.beginPath();
+    for (let i = 0; i < 5; i++) {
+      const a = (i * 4 * Math.PI / 5) - Math.PI / 2;
+      ctx.lineTo(Math.cos(a) * size, Math.sin(a) * size);
+    }
+    ctx.closePath();
+    ctx.restore();
+  }
+
+  function animate() {
+    ctx.clearRect(0, 0, W, H);
+    particles.forEach(p => {
+      ctx.globalAlpha = p.opacity;
+      ctx.fillStyle = p.hue;
+      if (p.shape === 'heart') {
+        drawHeart(ctx, p.x, p.y, p.size);
+        ctx.fill();
+      } else if (p.shape === 'star') {
+        drawStar(ctx, p.x, p.y, p.size * 0.8);
+        ctx.fill();
+      } else {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * 0.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      p.x += p.speedX;
+      p.y += p.speedY;
+      if (p.y < -20)  p.y = H + 10;
+      if (p.x < -20)  p.x = W + 10;
+      if (p.x > W+20) p.x = -10;
+    });
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(animate);
+  }
+  animate();
+})();
+
+/* ============================================================
+   ARRANQUE
+   ============================================================ */
+initGift();
+</script>
+</body>
+</html>
